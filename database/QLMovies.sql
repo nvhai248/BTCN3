@@ -14,7 +14,7 @@ CREATE TABLE "Movie" (
 DROP TABLE IF EXISTS "Account";
 
 CREATE TABLE "Account" (
-    "Username" varchar(255) NOT NULL,
+    "username" varchar(255) NOT NULL,
     "password" varchar(255) NOT NULL
 );
 

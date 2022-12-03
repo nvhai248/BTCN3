@@ -6,6 +6,7 @@ const handlebars = require("express-handlebars").create({
 const path = require("path");
 const routes = require("./routes");
 
+const session = require('express-session');
 
 // declare app
 const app = express();
@@ -25,6 +26,15 @@ app.use(
         extended: true,
     })
 );
+
+app.use(
+    session({
+        secret: "key that will sign cookies",
+        resave: true,
+        saveUninitialized: false,
+        store: "",
+    })
+)
 
 app.use(express.json());
 
