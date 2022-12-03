@@ -4,16 +4,12 @@ const handlebars = require("express-handlebars").create({
     extname: ".hbs",
 });
 const path = require("path");
-const routers = require("./routers");
+const routes = require("./routes");
 
-// connect to DB
-const db = require("./config/db");
-//connect DB
-db.connect();
 
 // declare app
 const app = express();
-const port = 3000;
+const port = 20468;
 
 // setup resources for client
 // all images,... are provided from the file "public"
@@ -32,7 +28,7 @@ app.use(
 
 app.use(express.json());
 
-routers(app);
+routes(app);
 
 app.use((err, req, res, next) => {
     res.status(500).send(err.message);

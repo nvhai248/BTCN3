@@ -2,8 +2,9 @@
   "name": "btcn3",
   "version": "1.0.0",
   "description": "",
-  "main": "web.js",
+  "main": "src/web.js",
   "scripts": {
+    "start": "nodemon --inspect src/web.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
