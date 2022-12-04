@@ -1,8 +1,6 @@
 let loginInterface = document.getElementById("login");
 let registerInterface = document.getElementById("register");
 
-console.log("cc");
-
 $('#goToRegisterBtn').click(function (e) {
     e.preventDefault();
     $('#loginInterface').addClass('noneDisplay');

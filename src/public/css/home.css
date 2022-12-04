@@ -3,5 +3,11 @@ img {
 }
 
 .noneDisplay {
-    display: none;
+  display: none;
+}
+
+#HomepageBtn,
+#favoritePageBtn,
+.detailMovie {
+  cursor: pointer;
 }

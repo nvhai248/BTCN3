@@ -8,6 +8,9 @@ class Movie {
         this.topRank = 0
         this.year = 0
         this.genres = []
+        this.casts = []
+        this.reviews = []
+        this.synopses = {}
     }
 
     setData(obj) {
@@ -19,12 +22,15 @@ class Movie {
         this.topRank = obj.topRank
         this.year = obj.year
         this.genres = obj.genres
+        this.casts = obj.casts
+        this.reviews = obj.reviews
+        this.synopses = obj.synopses
     }
 
     getInterfaceOnHome() {
         return `
         <div class="carousel-item">
-            <img src="${this.img}" class="d-block w-100" alt="${this.id}" />
+            <img src="${this.img}" class="d-block w-100 detailMovie" data-id="${this.id}" alt="${this.id}"/>
             <div class="carousel-caption d-none d-md-block">
             </div>
         </div>
@@ -34,7 +40,7 @@ class Movie {
     getFirst() {
         return `
         <div class="carousel-item active">
-            <img src="${this.img}" class="d-block w-100" alt="${this.id}" />
+            <img src="${this.img}" class="d-block w-100 detailMovie" data-id="${this.id}" alt="${this.id}"/>
             <div class="carousel-caption d-none d-md-block">
             </div>
         </div>
@@ -44,14 +50,14 @@ class Movie {
     getGenresString() {
         data = '';
         this.genres.forEach(element => {
-            data += element + " ";
+            data += element + ", ";
         });
         return data;
     }
 
     getCard() {
         return `
-        <div class="col-3">
+        <div class="col-3 detailMovie" data-id="${this.id}">
             <div class="card mb-3" style="width: 95%; height: 96%;">
                 <img src="${this.img}" class="card-img-top" alt="${this.id}">
                 <div class="card-body">
@@ -64,6 +70,36 @@ class Movie {
     }
 }
 
+
+class Cast {
+    constructor() {
+        this.id = "";
+        this.image = "";
+        this.legacyNameText = "";
+        this.name = "";
+    }
+
+    setData(obj) {
+        this.id = obj.id;
+        this.image = obj.image;
+        this.legacyNameText = obj.legacyNameText;
+        this.name = obj.name;
+    }
+
+    getCard() {
+        return `
+        <div class="col-3" data-id="${this.id}">
+            <div class="card mb-3" style="width: 95%; height: 96%;">
+                <img src="${this.image}" class="card-img-top" alt="${this.id}">
+                <div class="card-body">
+                    <h3>${this.name}</h3>
+                    <h5>${this.legacyNameText}</h5>
+                </div>
+            </div>
+        </div>
+        `
+    }
+}
 const firstBtn = `<button
         type="button"
         data-bs-target="#carouselExampleCaptions"
@@ -96,6 +132,8 @@ function largest5(arr, largArr) {
             }
             temp++;
         });
+
+        arr.splice(count, 1);
     }
 }
 
@@ -132,10 +170,6 @@ function getTopMovieRating(data, btn) {
     `
 }
 
-let data = '';
-let fullData = '';
-let fullObj = [];
-
 function fullCard(fullObj) {
     data = '';
     let countPage = parseInt(fullObj.length / 8);
@@ -160,9 +194,40 @@ function fullBtnPagination(index) {
     return data;
 }
 
+function getDetailMovie(obj) {
+    let temp = '';
+    if (obj.synopses != undefined) {
+        temp = obj.synopses.text;
+    }
+
+    return `
+    <div class="card mb-3 mt-5" id="loginInterface" style="min-width: 540px">
+        <div class="row g-0">
+        <div class="col-md-4">
+            <img src="${obj.img}" class="img-fluid rounded-start" alt="${obj.id}" />
+        </div>
+        <div class="col-md-8">
+            <div class="card-body">
+                <h1>${obj.title}</h1>
+
+                <h3>Rating: ${obj.rating}, Rating count: ${obj.ratingCount}</h3>
+                <h3>Top rank: ${obj.topRank}</h3>
+                <h3>Year: ${obj.year}</h3>
+                <h3>Synopses: </h3>
+                <textarea style="width: 100%; height: 38rem;">${temp}</textarea>
+            </div>
+        </div>
+        </div>
+    </div>
+  
+    `
+}
+
+let data = '';
+let fullObj = [];
+
 $(document).ready(function () {
     $.getJSON('/db/movies.json', function (jd) {
-        fullData = jd;
         jd.forEach(element => {
             temp = new Movie();
             temp.setData(element);
@@ -227,7 +292,7 @@ $(document).ready(function () {
             let preTableID = `#page${Ivo_pre.value}`;
             if (Ivo_pre.value == Ivo_next.value) {
                 let curTableID = `#page0`;
-                updateTable(preTableID, curTableID, 1);
+                updateTable(preTableID, curTableID, 0);
             }
             else {
                 let curTableID = `#page${Ivo_pre.value + 1}`;
@@ -235,12 +300,93 @@ $(document).ready(function () {
             }
         });
 
-
         delete jd;
         delete btn;
     });
 
+    let casts = [];
+    $.getJSON('/db/casts.json', function (jd) {
+        jd.forEach(element => {
+            temp = new Cast();
+            temp.setData(element);
+            casts.push(temp);
+        });
+    });
+
+
     setTimeout(() => {
-        console.log(fullObj);
+        console.log(casts);
+        // functions in Movie Interface
+        let homeInterface = document.getElementById("homeInterface");
+        let movieInterface = document.getElementById("movieInterface");
+        let favoriteInterface = document.getElementById("favoriteInterface");
+
+        $('#HomepageBtn').click(function (e) {
+            e.preventDefault();
+            $('#homeInterface').removeClass('noneDisplay');
+            $('#movieInterface').addClass('noneDisplay');
+            $('#favoriteInterface').addClass('noneDisplay');
+            $('#searchResultInterface').addClass('noneDisplay');
+        });
+
+        $('#favoritePageBtn').click(function (e) {
+            e.preventDefault();
+            $('#favoriteInterface').removeClass('noneDisplay');
+            $('#movieInterface').addClass('noneDisplay');
+            $('#homeInterface').addClass('noneDisplay');
+            $('#searchResultInterface').addClass('noneDisplay');
+        });
+
+        $('.detailMovie').click(function (e) {
+            e.preventDefault();
+            $('#movieInterface').removeClass('noneDisplay');
+            $('#favoriteInterface').addClass('noneDisplay');
+            $('#homeInterface').addClass('noneDisplay');
+            $('#searchResultInterface').addClass('noneDisplay');
+
+            const movieID = this.getAttribute('data-id');
+            console.log(movieID);
+            let movie = new Movie();
+            fullObj.forEach(element => {
+                if (element.id == movieID) {
+                    movie = element;
+                };
+            });
+
+            movieInterface.innerHTML = getDetailMovie(movie);
+        });
+
+        $('#Search').click(function (e) {
+            e.preventDefault();
+            $('#searchResultInterface').removeClass('noneDisplay');
+
+            $('#movieInterface').addClass('noneDisplay');
+            $('#favoriteInterface').addClass('noneDisplay');
+            $('#homeInterface').addClass('noneDisplay');
+
+            let type = document.getElementById("typeSearch").value;
+            let text = document.getElementById("textSearch").value;
+
+            let htmlT = '<div class="row">';
+            if (type == "1") {
+                fullObj.forEach(element => {
+                    if (element.title.indexOf(text) != -1) {
+                        htmlT += element.getCard();
+                    };
+                });
+            }
+            else if (type == "2") {
+                casts.forEach(element => {
+                    if (element.name != undefined)
+                        if (element.name.indexOf(text) != -1) {
+                            htmlT += element.getCard();
+                        };
+                });
+            }
+            htmlT += "</div>";
+
+            document.getElementById("searchResultInterface").innerHTML = htmlT;
+
+        });
     }, 1000);
 });

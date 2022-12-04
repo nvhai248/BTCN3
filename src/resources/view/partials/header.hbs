@@ -1,6 +1,7 @@
 <nav class="navbar navbar-expand-lg bg-dark">
   <div class="container-fluid">
-    <a class="navbar-brand text-white" href="#">Home</a>
+    <a class="navbar-brand text-white" id="HomepageBtn">Home</a>
+    <a class="navbar-brand text-white" id="favoritePageBtn">Favorite Movies</a>
     <button
       class="navbar-toggler"
       type="button"
@@ -16,14 +17,23 @@
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
 
       </ul>
-      <form class="d-flex" role="search">
+      <div class="d-flex" role="search">
         <input
           class="form-control me-2"
           type="search"
           placeholder="Search"
           aria-label="Search"
+          id="textSearch"
         />
-        <button class="btn btn-outline-success" type="submit">Search</button>
+        <select
+          class="form-select"
+          aria-label="Default select example me-2"
+          id="typeSearch"
+        >
+          <option value="1">Phim</option>
+          <option value="2">Diễn viên</option>
+        </select>
+        <button class="btn btn-outline-success ms-2" id="Search">Search</button>
         <a
           class="btn btn-outline-danger ms-5"
           aria-current="page"
@@ -31,7 +41,7 @@
           data-bs-toggle="modal"
           data-bs-target="#logoutModal"
         >Logout</a>
-      </form>
+      </div>
     </div>
   </div>
 </nav>
