@@ -14,8 +14,16 @@ CREATE TABLE "Movie" (
 DROP TABLE IF EXISTS "Account";
 
 CREATE TABLE "Account" (
+    "id" varchar(10) NOT NULL,
     "username" varchar(255) NOT NULL,
     "password" varchar(255) NOT NULL
+);
+
+DROP TABLE IF EXISTS "favoriteMovies";
+
+CREATE TABLE "favoriteMovies" (
+    "idUser" varchar(10) NOT NULL,
+    "idMovie" varchar(10) NOT NULL
 );
 
 DROP TABLE IF EXISTS "Person";
